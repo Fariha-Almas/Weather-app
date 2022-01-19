@@ -1,22 +1,33 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 // import Forcast from "../assets/rainy-day.png";
 import Thunder from "../assets/thunder.jpg";
 import { Button, Grid, makeStyles } from "@material-ui/core";
+import axios from "axios";
+import ForcastCard from "./ForcastCard";
 
 export default function Card() {
-  // useEffect =
-  //   (() => {
-  //     //   axios.get('https://api.github.com/users/mapbox')
-  //     // .then((response) => {
-  //     //   console.log( " --response of the api --",response.data);
-  //     // });
-  //   },
-  //   []);
+  // const [today, setToday] = useState([]);
+
+  useEffect(() => {
+    console.log("--useEffectm--");
+    axios
+      .post(
+        "api.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=7bb146e83da9de119d8e785fdd490228"
+      )
+      .then(
+        (response) => {
+          console.log("-- response --", response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }, []);
   return (
     <div>
       <Grid container>
         <Grid
-          // style={{ backgroundColor: "pink" }}
+          style={{ backgroundColor: "green" }}
           item
           xs={2}
           sm={2}
@@ -74,7 +85,7 @@ export default function Card() {
             style={{
               backgroundColor: "pink",
               display: "flex",
-              flexDirection: "row",
+              flexDirection: "column",
               justifyContent: "space-between",
               padding: "20px",
             }}
@@ -89,14 +100,30 @@ export default function Card() {
               {" "}
               Humidity <br /> Wind Speed{" "}
             </p>
-            <p>
+            <p
+            // style={{
+            //   alignSelf: "flex-end",
+            //   display: "flex",
+            //   flexDirection: "row",
+            // }}
+            >
               {" "}
               Humidity <br /> Wind Speed{" "}
             </p>
+            <Grid
+              style={{ backgroundColor: "greenyellow" }}
+              item
+              // xs={2}
+              // sm={2}
+              md={12}
+              lg={12}
+            >
+              <ForcastCard />
+            </Grid>
           </Grid>
         </Grid>
         <Grid
-          // style={{ backgroundColor: "gray" }}
+          style={{ backgroundColor: "gray" }}
           item
           xs={2}
           sm={2}
