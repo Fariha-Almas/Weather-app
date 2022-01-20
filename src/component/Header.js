@@ -8,9 +8,9 @@ export default function Header() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        paddingTop: "10px",
-        paddingBottom: "10px",
-        backgroundColor: "cadetblue",
+        paddingTop: "16px",
+        paddingBottom: "22px",
+        backgroundColor: "#0a5658",
       }}
     >
       <img src={Weather_icon} style={{ height: "70px", width: "70px" }} />

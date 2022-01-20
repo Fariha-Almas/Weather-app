@@ -14,136 +14,140 @@ const useStyles = makeStyles((theme) => ({
   },
   wrap: {
     [theme.breakpoints.down("lg")]: {
-      // display: "none",
       flexWrap: "wrap",
     },
+  },
+  card: {
+    backgroundColor: "#158689",
+    display: "flex",
+    flexDirection: "row",
+    borderRadius: "12px",
+  },
+  dataDetails: {
+    display: "flex",
+    justifyContent: "center",
+    flexDirection: "column",
+    color: "#fff",
+    alignItems: "center",
+  },
+  searchContainer: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    padding: "20px",
   },
 }));
 
 export default function Card() {
   const classes = useStyles();
+  const [search, setSearch] = useState("Paris");
   const [today, setToday] = useState();
   const [forcastData, setForcastData] = useState();
-
+  const [update, setUpdate] = useState("");
+  const MINUTE_MS = 60000;
   useEffect(() => {
     axios
       .post(
-        "https://api.openweathermap.org/data/2.5/weather?q=Paris&appid=7bb146e83da9de119d8e785fdd490228"
+        `https://api.openweathermap.org/data/2.5/weather?q=${search}&appid=7bb146e83da9de119d8e785fdd490228`
       )
       .then(
         (response) => {
-          // console.log("-- response --", response.data);
           setToday(response.data);
           // const numberBeforeDecimal = parseInt(today?.main?.temp_max);
-          // console.log("--jimin--", numberBeforeDecimal);
         },
         (error) => {
           console.log(error);
         }
       );
-  }, []);
+    const interval = setInterval(() => {
+      setUpdate(interval);
+    }, MINUTE_MS);
+    return () => clearInterval(interval);
+  }, [search, update]);
+
   const temp = parseInt(today?.main?.temp_max);
   useEffect(() => {
     axios
       .post(
-        "https://api.openweathermap.org/data/2.5/forecast?q=Paris&appid=7bb146e83da9de119d8e785fdd490228"
+        `https://api.openweathermap.org/data/2.5/forecast?q=${search}&appid=7bb146e83da9de119d8e785fdd490228`
       )
       .then(
         (response) => {
-          // console.log("-- weather -f-", response.data.list);
           let forcastList = response?.data?.list;
           var data = forcastList.slice(1, 6);
           setForcastData(data);
-          console.log("--jimin--", forcastData);
         },
         (error) => {
           console.log(error);
         }
       );
-  }, []);
+  }, [search]);
   return (
     <div>
       <Grid container>
-        <Grid
-          style={{ backgroundColor: "green" }}
-          item
-          xs={2}
-          sm={3}
-          md={3}
-          lg={3}
-          className={classes.right}
-        ></Grid>
-        <Grid
-          style={{
-            backgroundColor: "blue",
-            display: "flex",
-            flexDirection: "row",
-          }}
-          item
-          xs={12}
-          sm={6}
-          md={6}
-          lg={6}
-        >
+        <Grid item xs={2} sm={3} md={3} lg={3} className={classes.right}></Grid>
+        <Grid className={classes.card} item xs={12} sm={6} md={6} lg={6}>
           <Grid
             style={{
-              backgroundColor: "honeydew",
               paddingTop: "20px",
               paddingBottom: "20px",
-              // backgroundImage: `url(${Thunder})`,
             }}
             item
             xs={4}
             sm={4}
-            md={4}
-            lg={4}
+            md={3}
+            lg={3}
           >
             {" "}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-around",
-                alignItems: "center",
-                margin: "0px",
-              }}
-            >
-              <div>
-                <h2> Sunday</h2>
-                <p>
-                  May 16th <br /> kflgkld <br />
-                  {today?.name}{" "}
-                </p>
-              </div>
-              <div>
-                <h2>{temp} F</h2>
-                <p>{today?.weather[0]?.description}</p>
-              </div>
+            <div className={classes.dataDetails}>
+              <h2> {today?.name}</h2>
+              <h3 style={{ margin: "0px" }}>{temp} F</h3>
+
+              <img
+                src={`http://openweathermap.org/img/wn/${today?.weather[0]?.icon}@2x.png`}
+              />
+              <p>{today?.weather[0]?.description}</p>
             </div>
           </Grid>
           <Grid
-            style={{
-              backgroundColor: "red",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              padding: "20px",
-            }}
+            className={classes.searchContainer}
             item
             xs={8}
             sm={8}
-            md={8}
-            lg={8}
+            md={9}
+            lg={9}
           >
             <Grid
               style={{
-                backgroundColor: "green",
+                borderRadius: "12px",
+                overflow: "hidden",
+              }}
+              item
+              xs={12}
+              sm={12}
+              md={12}
+              lg={12}
+            >
+              <input
+                type="search"
+                autoCapitalize
+                placeholder="Paris"
+                style={{
+                  padding: "12px",
+                  width: "100vw",
+                }}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid
+              style={{
                 display: "flex",
+                color: "#fff",
                 justifyContent: "space-between",
               }}
               item
-              // xs={2}
-              // sm={2}
               md={12}
               lg={12}
             >
@@ -165,21 +169,17 @@ export default function Card() {
             <Grid
               className={classes.wrap}
               style={{
-                backgroundColor: "greenyellow",
                 display: "flex",
                 flexDirection: "row",
-                justifyContent: "space-around",
-                // flexWrap: "wrap",
               }}
               item
-              // xs={2}
-              // sm={2}
               md={12}
               lg={12}
             >
               {forcastData?.map((item, index) => (
                 <Link
                   to="/forcast"
+                  state={{ item: { item } }}
                   style={{ textDecoration: "none", color: "#000" }}
                 >
                   <ForcastCard item={item} />
@@ -188,15 +188,7 @@ export default function Card() {
             </Grid>
           </Grid>
         </Grid>
-        <Grid
-          style={{ backgroundColor: "gray" }}
-          item
-          xs={2}
-          sm={3}
-          md={3}
-          lg={3}
-          className={classes.right}
-        ></Grid>
+        <Grid item xs={2} sm={3} md={3} lg={3} className={classes.right}></Grid>
       </Grid>
     </div>
   );
